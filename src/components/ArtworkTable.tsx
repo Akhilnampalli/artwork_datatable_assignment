@@ -16,15 +16,15 @@ type Artwork = {
 
 const ArtworkTable: React.FC = () => {
   const [artworks, setArtworks] = useState<Artwork[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [totalCount, setTotalCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [totalCount, setTotalCount] = useState<number>(0);
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-  const [rowCount, setRowCount] = useState("");
+  const [rowCount, setRowCount] = useState<string>("");
   const overlayRef = useRef<OverlayPanel>(null);
 
-  // Fetch artworks for the given page
+  // Fetch data for current page
   const getArtworks = async (page: number) => {
     setLoading(true);
     try {
@@ -44,7 +44,7 @@ const ArtworkTable: React.FC = () => {
       setArtworks(formatted);
       setTotalCount(data.pagination?.total || 100);
     } catch (error) {
-      console.error("Failed to fetch artworks:", error);
+      console.error("Error fetching artworks:", error);
     } finally {
       setLoading(false);
     }
@@ -54,22 +54,22 @@ const ArtworkTable: React.FC = () => {
     getArtworks(currentPage);
   }, [currentPage]);
 
-  // Handle checkbox selection, preserving across pages
-  const handleRowSelection = (e: any) => {
+  // Preserve selection across pages
+  const handleRowSelection = (e: { value: Artwork[] }) => {
     const idsOnPage = artworks.map((item) => item.id);
-    const selectedNow = e.value.map((item: Artwork) => item.id);
+    const selectedNow = e.value.map((item) => item.id);
 
     setSelectedIds((prev) => {
       const updated = new Set(prev);
-      idsOnPage.forEach((id) => updated.delete(id)); // remove current page selections
-      selectedNow.forEach((id) => updated.add(id)); // add current selections
+      idsOnPage.forEach((id) => updated.delete(id));
+      selectedNow.forEach((id) => updated.add(id));
       return updated;
     });
   };
 
   const selectedForPage = artworks.filter((item) => selectedIds.has(item.id));
 
-  // Add rows selection by entering a number
+  // Add selected rows by number
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const num = parseInt(rowCount);
@@ -85,7 +85,7 @@ const ArtworkTable: React.FC = () => {
     overlayRef.current?.hide();
   };
 
-  // Custom header with the popup icon to the LEFT of Title
+  // Custom header (icon on left of title)
   const titleHeader = (
     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
       <Button
@@ -140,7 +140,7 @@ const ArtworkTable: React.FC = () => {
         totalRecords={totalCount}
         lazy
         first={(currentPage - 1) * 10}
-        onPage={(e) => setCurrentPage(e.page + 1)}
+        onPage={(e) => setCurrentPage((e.page ?? 0) + 1)} // ✅ fixed undefined error
         loading={loading}
         selectionMode="checkbox"
         selection={selectedForPage}

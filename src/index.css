@@ -1,0 +1,14 @@
+@import 'primereact/resources/themes/saga-blue/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f7f9fb;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+}
